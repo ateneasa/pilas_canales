@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>CANALES_FORESTAL (QFieldCloud)</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Canal_Orellana_1.js"></script>
+        <script src="data/Canal_Dehesas_2.js"></script>
+        <script src="data/pilas_3.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:20, minZoom:9
+        }).fitBounds([[38.82154672457424,-6.390102594859668],[39.349910971937476,-5.123948969698398]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>CANALES_FORESTAL (QFieldCloud)</h2>';
+        };
+        title.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleHybrid_0');
+        map.getPane('pane_GoogleHybrid_0').style.zIndex = 400;
+        var layer_GoogleHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 9,
+            maxZoom: 20,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_0;
+        map.addLayer(layer_GoogleHybrid_0);
+        function pop_Canal_Orellana_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(String(feature.properties['NOMBRE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Canal_Orellana_1_0() {
+            return {
+                pane: 'pane_Canal_Orellana_1',
+                opacity: 1,
+                color: 'rgba(1,175,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Canal_Orellana_1');
+        map.getPane('pane_Canal_Orellana_1').style.zIndex = 401;
+        map.getPane('pane_Canal_Orellana_1').style['mix-blend-mode'] = 'normal';
+        var layer_Canal_Orellana_1 = new L.geoJson(json_Canal_Orellana_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Canal_Orellana_1',
+            layerName: 'layer_Canal_Orellana_1',
+            pane: 'pane_Canal_Orellana_1',
+            onEachFeature: pop_Canal_Orellana_1,
+            style: style_Canal_Orellana_1_0,
+        });
+        bounds_group.addLayer(layer_Canal_Orellana_1);
+        map.addLayer(layer_Canal_Orellana_1);
+        function pop_Canal_Dehesas_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td>' + (feature.properties['NOMBRE'] !== null ? autolinker.link(String(feature.properties['NOMBRE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Canal_Dehesas_2_0() {
+            return {
+                pane: 'pane_Canal_Dehesas_2',
+                opacity: 1,
+                color: 'rgba(255,33,21,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Canal_Dehesas_2');
+        map.getPane('pane_Canal_Dehesas_2').style.zIndex = 402;
+        map.getPane('pane_Canal_Dehesas_2').style['mix-blend-mode'] = 'normal';
+        var layer_Canal_Dehesas_2 = new L.geoJson(json_Canal_Dehesas_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Canal_Dehesas_2',
+            layerName: 'layer_Canal_Dehesas_2',
+            pane: 'pane_Canal_Dehesas_2',
+            onEachFeature: pop_Canal_Dehesas_2,
+            style: style_Canal_Dehesas_2_0,
+        });
+        bounds_group.addLayer(layer_Canal_Dehesas_2);
+        map.addLayer(layer_Canal_Dehesas_2);
+        function pop_pilas_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">id</th>\
+                        <td>' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">tipo</th>\
+                        <td>' + (feature.properties['tipo'] !== null ? autolinker.link(String(feature.properties['tipo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">largo</th>\
+                        <td>' + (feature.properties['largo'] !== null ? autolinker.link(String(feature.properties['largo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ancho</th>\
+                        <td>' + (feature.properties['ancho'] !== null ? autolinker.link(String(feature.properties['ancho']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">alto</th>\
+                        <td>' + (feature.properties['alto'] !== null ? autolinker.link(String(feature.properties['alto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cubicacion</th>\
+                        <td>' + (feature.properties['cubicacion'] !== null ? autolinker.link(String(feature.properties['cubicacion']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_pilas_3_0(feature) {
+            switch(String(feature.properties['tipo'])) {
+                case 'Biomasa':
+                    return {
+                pane: 'pane_pilas_3',
+                shape: 'diamond',
+                radius: 8.8,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,108,156,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Madera':
+                    return {
+                pane: 'pane_pilas_3',
+                shape: 'diamond',
+                radius: 8.8,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,156,13,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_pilas_3');
+        map.getPane('pane_pilas_3').style.zIndex = 403;
+        map.getPane('pane_pilas_3').style['mix-blend-mode'] = 'normal';
+        var layer_pilas_3 = new L.geoJson(json_pilas_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_pilas_3',
+            layerName: 'layer_pilas_3',
+            pane: 'pane_pilas_3',
+            onEachFeature: pop_pilas_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_pilas_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_pilas_3);
+        map.addLayer(layer_pilas_3);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"tipo": "str","canal": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_tipo = document.createElement('div');
+            div_tipo.id = "div_tipo";
+            div_tipo.className= "filterselect";
+            document.getElementById("menu").appendChild(div_tipo);
+            sel_tipo = document.createElement('select');
+            sel_tipo.multiple = true;
+            sel_tipo.size = 3;
+            sel_tipo.id = "sel_tipo";
+            var tipo_options_str = "<option value='' unselected></option>";
+            sel_tipo.onchange = function(){filterFunc()};
+            tipo_options_str  += '<option value="NULL">NULL</option>';
+            tipo_options_str  += '<option value="Biomasa">Biomasa</option>';
+            tipo_options_str  += '<option value="Madera">Madera</option>';
+            sel_tipo.innerHTML = tipo_options_str;
+            div_tipo.appendChild(sel_tipo);
+            var lab_tipo = document.createElement('div');
+            lab_tipo.innerHTML = 'tipo';
+            lab_tipo.className = 'filterlabel';
+            div_tipo.appendChild(lab_tipo);
+            var reset_tipo = document.createElement('div');
+            reset_tipo.innerHTML = 'clear filter';
+            reset_tipo.className = 'filterlabel';
+            reset_tipo.onclick = function() {
+                var options = document.getElementById("sel_tipo").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_tipo.appendChild(reset_tipo);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_canal = document.createElement('div');
+            div_canal.id = "div_canal";
+            div_canal.className= "filterselect";
+            document.getElementById("menu").appendChild(div_canal);
+            sel_canal = document.createElement('select');
+            sel_canal.multiple = true;
+            sel_canal.size = 3;
+            sel_canal.id = "sel_canal";
+            var canal_options_str = "<option value='' unselected></option>";
+            sel_canal.onchange = function(){filterFunc()};
+            canal_options_str  += '<option value="NULL">NULL</option>';
+            canal_options_str  += '<option value="Dehesas">Dehesas</option>';
+            canal_options_str  += '<option value="Orellana">Orellana</option>';
+            sel_canal.innerHTML = canal_options_str;
+            div_canal.appendChild(sel_canal);
+            var lab_canal = document.createElement('div');
+            lab_canal.innerHTML = 'canal';
+            lab_canal.className = 'filterlabel';
+            div_canal.appendChild(lab_canal);
+            var reset_canal = document.createElement('div');
+            reset_canal.innerHTML = 'clear filter';
+            reset_canal.className = 'filterlabel';
+            reset_canal.onclick = function() {
+                var options = document.getElementById("sel_canal").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_canal.appendChild(reset_canal);
+        </script>
+    </body>
+</html>
