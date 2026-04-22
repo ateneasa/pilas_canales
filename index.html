@@ -19,11 +19,102 @@
             padding: 0;
             margin: 0;
         }
+        #filtros-panel {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+            padding: 10px 14px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            min-width: 210px;
+        }
+        #filtros-panel h3 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        #filtros-panel h3::after { content: ' ▲'; font-size: 10px; }
+        #filtros-panel h3.collapsed::after { content: ' ▼'; }
+        .filtro-grupo { margin-bottom: 8px; }
+        .filtro-grupo label.titulo {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        .filtro-grupo label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 10px;
+            margin-bottom: 3px;
+            cursor: pointer;
+            color: #333;
+        }
+        .filtro-grupo input[type=checkbox] { margin-right: 5px; cursor: pointer; }
+        .filtro-grupo select {
+            width: 100%;
+            padding: 3px 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        #btn-reset {
+            width: 100%;
+            padding: 5px;
+            margin-top: 6px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        #btn-reset:hover { background: #c0392b; }
+        #filtros-contador {
+            font-size: 11px;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
         </style>
         <title>CANALES_FORESTAL (QFieldCloud)</title>
     </head>
     <body>
         <div id="map">
+        </div>
+        <div id="filtros-panel">
+            <h3 id="filtros-titulo">🔍 Filtros de pilas</h3>
+            <div id="filtros-contenido">
+                <div class="filtro-grupo">
+                    <label class="titulo">Producto</label>
+                    <label><input type="checkbox" class="filtro-tipo" value="Biomasa" checked> Biomasa</label>
+                    <label><input type="checkbox" class="filtro-tipo" value="Madera" checked> Madera</label>
+                </div>
+                <div class="filtro-grupo">
+                    <label class="titulo">Canal</label>
+                    <label><input type="checkbox" class="filtro-canal" value="Orellana" checked> Orellana</label>
+                    <label><input type="checkbox" class="filtro-canal" value="Dehesas" checked> Dehesas</label>
+                </div>
+                <div class="filtro-grupo">
+                    <label class="titulo">Año de cierre</label>
+                    <select id="filtro-anio">
+                        <option value="todos">Todos los años</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+                <button id="btn-reset">Limpiar filtros</button>
+                <div id="filtros-contador"></div>
+            </div>
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -776,6 +867,73 @@
         bounds_group.addLayer(layer_PKorellana_6);
         map.addLayer(layer_PKorellana_6);
         setBounds();
+
+        // ── FILTROS DE PILAS ──────────────────────────────────────────
+        function aplicarFiltros() {
+            var tiposActivos = [];
+            document.querySelectorAll('.filtro-tipo:checked').forEach(function(cb) {
+                tiposActivos.push(cb.value);
+            });
+            var canalesActivos = [];
+            document.querySelectorAll('.filtro-canal:checked').forEach(function(cb) {
+                canalesActivos.push(cb.value);
+            });
+            var anioActivo = document.getElementById('filtro-anio').value;
+
+            var visibles = 0, total = 0;
+
+            layer_pilas_5.eachLayer(function(layer) {
+                var props = layer.feature.properties;
+                total++;
+                var tipo   = props.tipo   || '';
+                var canal  = props.canal  || '';
+                var anio   = props.cierre ? props.cierre.substring(0, 4) : '';
+
+                var mostrar = tiposActivos.includes(tipo)
+                           && canalesActivos.includes(canal)
+                           && (anioActivo === 'todos' || anio === anioActivo);
+
+                layer.setStyle({ opacity: mostrar ? 1 : 0, fillOpacity: mostrar ? 1 : 0 });
+                if (mostrar) visibles++;
+            });
+
+            document.getElementById('filtros-contador').textContent =
+                'Mostrando ' + visibles + ' de ' + total + ' pilas';
+        }
+
+        document.querySelectorAll('.filtro-tipo, .filtro-canal').forEach(function(cb) {
+            cb.addEventListener('change', aplicarFiltros);
+        });
+        document.getElementById('filtro-anio').addEventListener('change', aplicarFiltros);
+
+        document.getElementById('btn-reset').addEventListener('click', function() {
+            document.querySelectorAll('.filtro-tipo, .filtro-canal').forEach(function(cb) {
+                cb.checked = true;
+            });
+            document.getElementById('filtro-anio').value = 'todos';
+            aplicarFiltros();
+        });
+
+        // Colapsar/expandir panel
+        document.getElementById('filtros-titulo').addEventListener('click', function() {
+            var c = document.getElementById('filtros-contenido');
+            var t = document.getElementById('filtros-titulo');
+            if (c.style.display === 'none') {
+                c.style.display = 'block';
+                t.classList.remove('collapsed');
+            } else {
+                c.style.display = 'none';
+                t.classList.add('collapsed');
+            }
+        });
+
+        // Evitar que los clicks en el panel muevan el mapa
+        L.DomEvent.disableClickPropagation(document.getElementById('filtros-panel'));
+        L.DomEvent.disableScrollPropagation(document.getElementById('filtros-panel'));
+
+        aplicarFiltros();
+        // ─────────────────────────────────────────────────────────────
+
         var i = 0;
         layer_PKorellana_6.eachLayer(function(layer) {
             var context = {
