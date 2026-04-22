@@ -19,117 +19,11 @@
             padding: 0;
             margin: 0;
         }
-        #filtros-panel {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            z-index: 1000;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            padding: 10px 14px;
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            min-width: 220px;
-        }
-        #filtros-panel h3 {
-            margin: 0 0 8px 0;
-            font-size: 13px;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            cursor: pointer;
-            user-select: none;
-        }
-        #filtros-panel h3::after {
-            content: ' ▲';
-            font-size: 10px;
-        }
-        #filtros-panel h3.collapsed::after {
-            content: ' ▼';
-        }
-        #filtros-contenido {
-            display: block;
-        }
-        .filtro-grupo {
-            margin-bottom: 8px;
-        }
-        .filtro-grupo label.titulo {
-            display: block;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 4px;
-            font-size: 12px;
-        }
-        .filtro-grupo label {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 10px;
-            margin-bottom: 3px;
-            cursor: pointer;
-            color: #333;
-        }
-        .filtro-grupo input[type=checkbox] {
-            margin-right: 5px;
-            cursor: pointer;
-        }
-        .filtro-grupo select {
-            width: 100%;
-            padding: 3px 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        #btn-reset {
-            width: 100%;
-            padding: 5px;
-            margin-top: 6px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        #btn-reset:hover {
-            background: #c0392b;
-        }
-        #filtros-contador {
-            font-size: 11px;
-            color: #888;
-            text-align: right;
-            margin-top: 5px;
-        }
         </style>
         <title>CANALES_FORESTAL (QFieldCloud)</title>
     </head>
     <body>
         <div id="map">
-        </div>
-        <div id="filtros-panel">
-            <h3 id="filtros-titulo">🔍 Filtros de pilas</h3>
-            <div id="filtros-contenido">
-                <div class="filtro-grupo">
-                    <label class="titulo">Tipo</label>
-                    <label><input type="checkbox" class="filtro-tipo" value="Biomasa" checked> Biomasa</label>
-                    <label><input type="checkbox" class="filtro-tipo" value="Madera" checked> Madera</label>
-                </div>
-                <div class="filtro-grupo">
-                    <label class="titulo">Canal</label>
-                    <label><input type="checkbox" class="filtro-canal" value="Orellana" checked> Orellana</label>
-                    <label><input type="checkbox" class="filtro-canal" value="Dehesas" checked> Dehesas</label>
-                </div>
-                <div class="filtro-grupo">
-                    <label class="titulo">Año de cierre</label>
-                    <select id="filtro-anio">
-                        <option value="todos">Todos los años</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                    </select>
-                </div>
-                <button id="btn-reset">Limpiar filtros</button>
-                <div id="filtros-contador"></div>
-            </div>
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
@@ -146,13 +40,15 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.wms.js"></script>
         <script src="js/leaflet.photon.js"></script>
-        <script src="data/parcelas_Orellana_2.js"></script>
-        <script src="data/pilas_3.js"></script>
-        <script src="data/PKorellana_4.js"></script>
+        <script src="data/parcelasCanales_2.js"></script>
+        <script src="data/parcelas_Dehesas_3.js"></script>
+        <script src="data/parcelas_Orellana_4.js"></script>
+        <script src="data/pilas_5.js"></script>
+        <script src="data/PKorellana_6.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:20, minZoom:9
-        }).fitBounds([[39.009002618107736,-6.1446483345094425],[39.05037316536628,-6.058378993125822]]);
+        }).fitBounds([[38.92334147820887,-6.231505845435733],[39.253129225462025,-5.541579510764339]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -262,7 +158,315 @@
             attribution: '',
         });
         map.addLayer(layer_Ortoimagen_1);
-        function pop_parcelas_Orellana_2(feature, layer) {
+        function pop_parcelasCanales_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Estratos'] !== null ? autolinker.link(String(feature.properties['Estratos']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Actuación'] !== null ? autolinker.link(String(feature.properties['Actuación']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Estado'] !== null ? autolinker.link(String(feature.properties['Estado']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Corta'] !== null ? autolinker.link(String(feature.properties['Corta']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Poda'] !== null ? autolinker.link(String(feature.properties['Poda']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Saca'] !== null ? autolinker.link(String(feature.properties['Saca']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['zona'] !== null ? autolinker.link(String(feature.properties['zona']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['superficie_ha'] !== null ? autolinker.link(String(feature.properties['superficie_ha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Especie'] !== null ? autolinker.link(String(feature.properties['Especie']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Estadi'] !== null ? autolinker.link(String(feature.properties['Estadi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['observaciones'] !== null ? autolinker.link(String(feature.properties['observaciones']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(String(feature.properties['layer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(String(feature.properties['path']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Rango_Restos'] !== null ? autolinker.link(String(feature.properties['Rango_Restos']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Restos_media'] !== null ? autolinker.link(String(feature.properties['Restos_media']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Restos_anejoIII'] !== null ? autolinker.link(String(feature.properties['Restos_anejoIII']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_parcelasCanales_2_0(feature) {
+            switch(String(feature.properties['Especie'])) {
+                case 'Zona 1: Eucalipto':
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(47,129,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Zona 2: Pino piñonero':
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(130,41,219,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Zona 3: Matorral con arbolado disperso':
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(17,230,124,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Zona 4: Encina':
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,37,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Zona 5: Cañaveral':
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(160,225,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_parcelasCanales_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(218,129,46,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_parcelasCanales_2');
+        map.getPane('pane_parcelasCanales_2').style.zIndex = 402;
+        map.getPane('pane_parcelasCanales_2').style['mix-blend-mode'] = 'normal';
+        var layer_parcelasCanales_2 = new L.geoJson(json_parcelasCanales_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_parcelasCanales_2',
+            layerName: 'layer_parcelasCanales_2',
+            pane: 'pane_parcelasCanales_2',
+            onEachFeature: pop_parcelasCanales_2,
+            style: style_parcelasCanales_2_0,
+        });
+        bounds_group.addLayer(layer_parcelasCanales_2);
+        map.addLayer(layer_parcelasCanales_2);
+        function pop_parcelas_Dehesas_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Estratos'] !== null ? autolinker.link(String(feature.properties['Estratos']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Actuación'] !== null ? autolinker.link(String(feature.properties['Actuación']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['zona'] !== null ? autolinker.link(String(feature.properties['zona']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['superficie_ha'] !== null ? autolinker.link(String(feature.properties['superficie_ha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['vegetacion'] !== null ? autolinker.link(String(feature.properties['vegetacion']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['clara%'] !== null ? autolinker.link(String(feature.properties['clara%']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['poda%'] !== null ? autolinker.link(String(feature.properties['poda%']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['cuneta%'] !== null ? autolinker.link(String(feature.properties['cuneta%']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['apilado%'] !== null ? autolinker.link(String(feature.properties['apilado%']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['astillado%'] !== null ? autolinker.link(String(feature.properties['astillado%']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_parcelas_Dehesas_3_0(feature) {
+            switch(String(feature.properties['Estratos'])) {
+                case 'Bosques mixtos de frondosas':
+                    return {
+                pane: 'pane_parcelas_Dehesas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,133,229,1.0)',
+                interactive: false,
+            }
+                    break;
+                case 'Encinar':
+                    return {
+                pane: 'pane_parcelas_Dehesas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(42,201,44,1.0)',
+                interactive: false,
+            }
+                    break;
+                case 'Masa mixta de coníferas y quercíneas':
+                    return {
+                pane: 'pane_parcelas_Dehesas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,240,15,1.0)',
+                interactive: false,
+            }
+                    break;
+                case 'Matorral con arbolado disperso':
+                    return {
+                pane: 'pane_parcelas_Dehesas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(25,22,231,1.0)',
+                interactive: false,
+            }
+                    break;
+                case 'Pinar de pino piñonero (Pinus pinea)':
+                    return {
+                pane: 'pane_parcelas_Dehesas_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(28,210,213,1.0)',
+                interactive: false,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_parcelas_Dehesas_3');
+        map.getPane('pane_parcelas_Dehesas_3').style.zIndex = 403;
+        map.getPane('pane_parcelas_Dehesas_3').style['mix-blend-mode'] = 'normal';
+        var layer_parcelas_Dehesas_3 = new L.geoJson(json_parcelas_Dehesas_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_parcelas_Dehesas_3',
+            layerName: 'layer_parcelas_Dehesas_3',
+            pane: 'pane_parcelas_Dehesas_3',
+            onEachFeature: pop_parcelas_Dehesas_3,
+            style: style_parcelas_Dehesas_3_0,
+        });
+        bounds_group.addLayer(layer_parcelas_Dehesas_3);
+        map.addLayer(layer_parcelas_Dehesas_3);
+        function pop_parcelas_Orellana_4(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -308,11 +512,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_parcelas_Orellana_2_0(feature) {
+        function style_parcelas_Orellana_4_0(feature) {
             switch(String(feature.properties['Especie'])) {
                 case 'Zona 1: Eucalipto':
                     return {
-                pane: 'pane_parcelas_Orellana_2',
+                pane: 'pane_parcelas_Orellana_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -327,7 +531,7 @@
                     break;
                 case 'Zona 2: Pino piñonero':
                     return {
-                pane: 'pane_parcelas_Orellana_2',
+                pane: 'pane_parcelas_Orellana_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -342,7 +546,7 @@
                     break;
                 case 'Zona 3: Matorral con arbolado disperso':
                     return {
-                pane: 'pane_parcelas_Orellana_2',
+                pane: 'pane_parcelas_Orellana_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -357,7 +561,7 @@
                     break;
                 case 'Zona 4: Encina':
                     return {
-                pane: 'pane_parcelas_Orellana_2',
+                pane: 'pane_parcelas_Orellana_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -372,7 +576,7 @@
                     break;
                 case 'Zona 5: Cañaveral':
                     return {
-                pane: 'pane_parcelas_Orellana_2',
+                pane: 'pane_parcelas_Orellana_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -387,21 +591,21 @@
                     break;
             }
         }
-        map.createPane('pane_parcelas_Orellana_2');
-        map.getPane('pane_parcelas_Orellana_2').style.zIndex = 402;
-        map.getPane('pane_parcelas_Orellana_2').style['mix-blend-mode'] = 'normal';
-        var layer_parcelas_Orellana_2 = new L.geoJson(json_parcelas_Orellana_2, {
+        map.createPane('pane_parcelas_Orellana_4');
+        map.getPane('pane_parcelas_Orellana_4').style.zIndex = 404;
+        map.getPane('pane_parcelas_Orellana_4').style['mix-blend-mode'] = 'normal';
+        var layer_parcelas_Orellana_4 = new L.geoJson(json_parcelas_Orellana_4, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_parcelas_Orellana_2',
-            layerName: 'layer_parcelas_Orellana_2',
-            pane: 'pane_parcelas_Orellana_2',
-            onEachFeature: pop_parcelas_Orellana_2,
-            style: style_parcelas_Orellana_2_0,
+            dataVar: 'json_parcelas_Orellana_4',
+            layerName: 'layer_parcelas_Orellana_4',
+            pane: 'pane_parcelas_Orellana_4',
+            onEachFeature: pop_parcelas_Orellana_4,
+            style: style_parcelas_Orellana_4_0,
         });
-        bounds_group.addLayer(layer_parcelas_Orellana_2);
-        map.addLayer(layer_parcelas_Orellana_2);
-        function pop_pilas_3(feature, layer) {
+        bounds_group.addLayer(layer_parcelas_Orellana_4);
+        map.addLayer(layer_parcelas_Orellana_4);
+        function pop_pilas_5(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">id</th>\
@@ -435,11 +639,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_pilas_3_0(feature) {
+        function style_pilas_5_0(feature) {
             switch(String(feature.properties['tipo'])) {
                 case 'Biomasa':
                     return {
-                pane: 'pane_pilas_3',
+                pane: 'pane_pilas_5',
                 shape: 'diamond',
                 radius: 8.8,
                 opacity: 1,
@@ -456,7 +660,7 @@
                     break;
                 case 'Madera':
                     return {
-                pane: 'pane_pilas_3',
+                pane: 'pane_pilas_5',
                 shape: 'diamond',
                 radius: 8.8,
                 opacity: 1,
@@ -473,27 +677,27 @@
                     break;
             }
         }
-        map.createPane('pane_pilas_3');
-        map.getPane('pane_pilas_3').style.zIndex = 403;
-        map.getPane('pane_pilas_3').style['mix-blend-mode'] = 'normal';
-        var layer_pilas_3 = new L.geoJson(json_pilas_3, {
+        map.createPane('pane_pilas_5');
+        map.getPane('pane_pilas_5').style.zIndex = 405;
+        map.getPane('pane_pilas_5').style['mix-blend-mode'] = 'normal';
+        var layer_pilas_5 = new L.geoJson(json_pilas_5, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_pilas_3',
-            layerName: 'layer_pilas_3',
-            pane: 'pane_pilas_3',
-            onEachFeature: pop_pilas_3,
+            dataVar: 'json_pilas_5',
+            layerName: 'layer_pilas_5',
+            pane: 'pane_pilas_5',
+            onEachFeature: pop_pilas_5,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.shapeMarker(latlng, style_pilas_3_0(feature));
+                return L.shapeMarker(latlng, style_pilas_5_0(feature));
             },
         });
-        bounds_group.addLayer(layer_pilas_3);
-        map.addLayer(layer_pilas_3);
-        function pop_PKorellana_4(feature, layer) {
+        bounds_group.addLayer(layer_pilas_5);
+        map.addLayer(layer_pilas_5);
+        function pop_PKorellana_6(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -513,9 +717,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_PKorellana_4_0() {
+        function style_PKorellana_6_0() {
             return {
-                pane: 'pane_PKorellana_4',
+                pane: 'pane_PKorellana_6',
                 radius: 7.6,
                 opacity: 1,
                 color: 'rgba(250,139,57,1.0)',
@@ -529,9 +733,9 @@
                 interactive: true,
             }
         }
-        function style_PKorellana_4_1() {
+        function style_PKorellana_6_1() {
             return {
-                pane: 'pane_PKorellana_4',
+                pane: 'pane_PKorellana_6',
                 radius: 3.1091,
                 opacity: 1,
                 color: 'rgba(250,176,124,1.0)',
@@ -545,128 +749,55 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_PKorellana_4');
-        map.getPane('pane_PKorellana_4').style.zIndex = 404;
-        map.getPane('pane_PKorellana_4').style['mix-blend-mode'] = 'normal';
-        var layer_PKorellana_4 = new L.geoJson.multiStyle(json_PKorellana_4, {
+        map.createPane('pane_PKorellana_6');
+        map.getPane('pane_PKorellana_6').style.zIndex = 406;
+        map.getPane('pane_PKorellana_6').style['mix-blend-mode'] = 'normal';
+        var layer_PKorellana_6 = new L.geoJson.multiStyle(json_PKorellana_6, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_PKorellana_4',
-            layerName: 'layer_PKorellana_4',
-            pane: 'pane_PKorellana_4',
-            onEachFeature: pop_PKorellana_4,
+            dataVar: 'json_PKorellana_6',
+            layerName: 'layer_PKorellana_6',
+            pane: 'pane_PKorellana_6',
+            onEachFeature: pop_PKorellana_6,
             pointToLayers: [function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.shapeMarker(latlng, style_PKorellana_4_0(feature));
+                return L.shapeMarker(latlng, style_PKorellana_6_0(feature));
             },function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.shapeMarker(latlng, style_PKorellana_4_1(feature));
+                return L.shapeMarker(latlng, style_PKorellana_6_1(feature));
             },
         ]});
-        bounds_group.addLayer(layer_PKorellana_4);
-        map.addLayer(layer_PKorellana_4);
+        bounds_group.addLayer(layer_PKorellana_6);
+        map.addLayer(layer_PKorellana_6);
         setBounds();
-
-        // ── FILTROS DE PILAS ──────────────────────────────────────────
-        function aplicarFiltros() {
-            var tiposActivos = [];
-            document.querySelectorAll('.filtro-tipo:checked').forEach(function(cb) {
-                tiposActivos.push(cb.value);
-            });
-            var canalesActivos = [];
-            document.querySelectorAll('.filtro-canal:checked').forEach(function(cb) {
-                canalesActivos.push(cb.value);
-            });
-            var anioActivo = document.getElementById('filtro-anio').value;
-
-            var visibles = 0;
-            var total = 0;
-
-            layer_pilas_3.eachLayer(function(layer) {
-                var props = layer.feature.properties;
-                total++;
-                var tipo = props.tipo || '';
-                var canal = props.canal || '';
-                var anio = props.cierre ? props.cierre.substring(0, 4) : '';
-
-                var mostrar = tiposActivos.includes(tipo)
-                    && canalesActivos.includes(canal)
-                    && (anioActivo === 'todos' || anio === anioActivo);
-
-                if (mostrar) {
-                    layer.setStyle({ opacity: 1, fillOpacity: 1 });
-                    if (layer.setRadius) layer.setRadius(8.8);
-                    visibles++;
-                } else {
-                    layer.setStyle({ opacity: 0, fillOpacity: 0 });
-                }
-            });
-
-            document.getElementById('filtros-contador').textContent =
-                'Mostrando ' + visibles + ' de ' + total + ' pilas';
-        }
-
-        document.querySelectorAll('.filtro-tipo, .filtro-canal').forEach(function(cb) {
-            cb.addEventListener('change', aplicarFiltros);
-        });
-        document.getElementById('filtro-anio').addEventListener('change', aplicarFiltros);
-
-        document.getElementById('btn-reset').addEventListener('click', function() {
-            document.querySelectorAll('.filtro-tipo, .filtro-canal').forEach(function(cb) {
-                cb.checked = true;
-            });
-            document.getElementById('filtro-anio').value = 'todos';
-            aplicarFiltros();
-        });
-
-        // Colapsar/expandir panel
-        document.getElementById('filtros-titulo').addEventListener('click', function() {
-            var contenido = document.getElementById('filtros-contenido');
-            var titulo = document.getElementById('filtros-titulo');
-            if (contenido.style.display === 'none') {
-                contenido.style.display = 'block';
-                titulo.classList.remove('collapsed');
-            } else {
-                contenido.style.display = 'none';
-                titulo.classList.add('collapsed');
-            }
-        });
-
-        // Impedir que los clicks en el panel afecten al mapa
-        L.DomEvent.disableClickPropagation(document.getElementById('filtros-panel'));
-        L.DomEvent.disableScrollPropagation(document.getElementById('filtros-panel'));
-
-        aplicarFiltros();
-        // ─────────────────────────────────────────────────────────────
-
         var i = 0;
-        layer_PKorellana_4.eachLayer(function(layer) {
+        layer_PKorellana_6.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['PK_dehesas'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK_dehesas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PKorellana_4'});
+            layer.bindTooltip((layer.feature.properties['PK_dehesas'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['PK_dehesas']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PKorellana_6'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_PKorellana_4]);
+        resetLabels([layer_PKorellana_6]);
         map.on("zoomend", function(){
-            resetLabels([layer_PKorellana_4]);
+            resetLabels([layer_PKorellana_6]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_PKorellana_4]);
+            resetLabels([layer_PKorellana_6]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_PKorellana_4]);
+            resetLabels([layer_PKorellana_6]);
         });
         </script>        
     </body>

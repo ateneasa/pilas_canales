@@ -38,6 +38,7 @@
         .leaflet-popup-content.media{
             width: auto!important;
             height: auto!important;
+            overflow: auto;
         }
         .leaflet-popup-content th {
             text-align: left;
@@ -194,7 +195,7 @@
             justify-content: center;
             align-items: center;
         }
-        .css_PKorellana_4 {
+        .css_PKorellana_6 {
             text-shadow: -1px -1px 0 #fafafa,
                 -1px 0px 0 #fafafa,
                 -1px 1px 0 #fafafa,
