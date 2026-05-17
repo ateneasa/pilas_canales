@@ -14,8 +14,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Mirror to valverdino
-        uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url: https://github.com/valverdino/pilas_canales.git
-          ssh_private_key: ${{ secrets.VALVERDINO_SSH_KEY }}
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VALVERDINO_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Push via SSH
+        run: |
+          git remote add valverdino git@github.com:valverdino/pilas_canales.git
+          git push valverdino --all --force
+          git push valverdino --tags --force
